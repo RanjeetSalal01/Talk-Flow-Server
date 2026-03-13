@@ -5,7 +5,7 @@ import {
   getIncomingRequests,
   getOutgoingRequests,
   rejectFriendRequest,
-  sendFriendRequest
+  sendFriendRequest,
 } from "../controllers/friendRequestController";
 import { verifyToken } from "../middleware/auth";
 

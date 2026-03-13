@@ -3,6 +3,13 @@ import { ObjectId } from "mongodb";
 import { User } from "./user";
 import { Conversation } from "./conversation";
 
+export enum MessageType {
+  Text = "text",
+  Image = "image",
+  Video = "video",
+  File = "file",
+}
+
 export class Message {
   readonly _id!: ObjectId;
 
@@ -19,6 +26,12 @@ export class Message {
 
   @prop({ default: "sent" })
   public status?: string;
+
+  @prop({ enum: MessageType, default: MessageType.Text })
+  public type?: MessageType;
+
+  @prop({ default: null })
+  public mediaUrl?: string | null;
 
   @prop({ default: false })
   public isDeleted?: boolean;

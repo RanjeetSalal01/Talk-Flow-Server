@@ -1,85 +1,76 @@
-import { Request, Response } from "express";
-import { CallModel } from "../models/call";
-import { getIO } from "../utils/socket";
+import { Request, Response, NextFunction } from "express";
+import { CallModel, CallStatus } from "../models/call";
+import { ObjectId } from "mongodb";
 
-export const initiateCall = async (req: Request, res: Response) => {
+export const initiateCall = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const { callerId, receiverId, callType } = req.body;
+    const callerId = new ObjectId(req.body.user.userId);
+    const { receiverId, callType } = req.body;
     const call = await CallModel.create({
-      id: `${callerId}_${receiverId}_${Date.now()}`,
       callerId,
-      receiverId,
+      receiverId: new ObjectId(receiverId),
       callType,
-      status: "ringing",
+      status: CallStatus.Ringing,
     });
-
-    // notify receiver via socket
-    try {
-      const io = getIO();
-      io.to(receiverId).emit("incomingCall", call);
-    } catch (e) {
-      console.warn("Socket not ready when initiating call", e);
-    }
-
-    res.status(201).json({ success: true, data: call });
-  } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
+    return res.status(201).json({ callId: call._id });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const endCall = async (req: Request, res: Response) => {
+export const updateCallStatus = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const { id } = req.params;
-    const call = await CallModel.findByIdAndUpdate(
-      id,
-      {
-        status: "ended",
-        ended_at: new Date(),
-      },
-      { new: true }
-    );
+    const { callId, status } = req.body;
+    const now = new Date();
+    const update: any = { status };
 
-    // notify both parties that the call has ended
-    try {
-      const io = getIO();
-      if (call) {
-        io.to((call as any).callerId.toString()).emit("callEnded", call);
-        io.to((call as any).receiverId.toString()).emit("callEnded", call);
-      }
-    } catch (e) {
-      console.warn("Socket not ready when ending call", e);
+    if (status === CallStatus.Active) {
+      update.startedAt = now; // ✅ server sets startedAt
     }
 
-    res.json({ success: true, data: call });
-  } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
+    if (status === CallStatus.Ended) {
+      update.endedAt = now; // ✅ server sets endedAt
+      const call = await CallModel.findById(callId).select("startedAt");
+      if (call?.startedAt) {
+        // ✅ server calculates duration
+        update.duration = Math.floor(
+          (now.getTime() - new Date(call.startedAt).getTime()) / 1000,
+        );
+      }
+    }
+
+    // missed, rejected, busy → only update status, no times
+    await CallModel.findByIdAndUpdate(callId, update, { new: true });
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const acceptCall = async (req: Request, res: Response) => {
+export const getCallHistory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
-    const { id } = req.params;
-    const call = await CallModel.findByIdAndUpdate(
-      id,
-      {
-        status: "accepted",
-        started_at: new Date(),
-      },
-      { new: true }
-    );
-
-    // notify caller
-    try {
-      const io = getIO();
-      if (call) {
-        io.to((call as any).callerId.toString()).emit("callAccepted", call);
-      }
-    } catch (e) {
-      console.warn("Socket not ready when accepting call", e);
-    }
-
-    res.json({ success: true, data: call });
-  } catch (error: any) {
-    res.status(400).json({ success: false, message: error.message });
+    const userId = new ObjectId(req.body.user.userId);
+    const calls = await CallModel.find({
+      $or: [{ callerId: userId }, { receiverId: userId }],
+    })
+      .populate("callerId", "fullName avatarUrl username")
+      .populate("receiverId", "fullName avatarUrl username")
+      .sort({ createdAt: -1 })
+      .limit(50);
+    return res.status(200).json(calls);
+  } catch (error) {
+    next(error);
   }
 };

@@ -1,14 +1,20 @@
 import express from "express";
+import { verifyToken } from "../middleware/auth";
 import {
+  getCallHistory,
   initiateCall,
-  endCall,
-  acceptCall,
+  updateCallStatus,
 } from "../controllers/callController";
 
 const router = express.Router();
 
-router.post("/initiate", initiateCall);
-router.put("/:id/accept", acceptCall);
-router.put("/:id/end", endCall);
+// api/calls/initiate
+router.post("/initiate", verifyToken, initiateCall);
+
+// api/calls/status
+router.patch("/status", verifyToken, updateCallStatus);
+
+// api/calls/history
+router.get("/history", verifyToken, getCallHistory);
 
 export default router;

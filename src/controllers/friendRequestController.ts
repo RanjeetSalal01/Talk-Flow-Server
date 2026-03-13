@@ -11,16 +11,20 @@ export const sendFriendRequest = async (req: Request, res: Response) => {
   try {
     const { user, receiverId } = req.body;
 
-    const friendRequest = await FriendRequestModel.create({
+    let friendRequest = await FriendRequestModel.create({
       senderId: user.userId,
       receiverId,
       status: FriendRequestStatus.Pending,
     });
 
+    let friendRequestDetails = await FriendRequestModel.findById(
+      friendRequest._id,
+    ).populate("senderId", "username avatarUrl bio fullName");
+
     // notify receiver via socket
     try {
       const io = getIO();
-      io.to(receiverId).emit("friendRequest", friendRequest);
+      io.to(receiverId).emit("friendRequest", friendRequestDetails);
     } catch (e) {
       console.warn("Socket not ready when sending friend request", e);
     }
@@ -38,7 +42,7 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
       id,
       { status: "accepted" },
       { new: true },
-    );
+    ).populate("receiverId", "username avatarUrl bio fullName");
 
     // create friendship
     if (friendRequest) {
@@ -70,7 +74,10 @@ export const acceptFriendRequest = async (req: Request, res: Response) => {
 export const rejectFriendRequest = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const fr = await FriendRequestModel.findByIdAndDelete(id);
+    const fr = await FriendRequestModel.findByIdAndDelete(id).populate(
+      "receiverId",
+      "username avatarUrl bio fullName",
+    );
 
     // inform sender about rejection
     try {
@@ -112,7 +119,15 @@ export const getFriends = async (req: Request, res: Response) => {
                 },
               },
             },
-            { $project: { username: 1, avatarUrl: 1, bio: 1, isOnline: 1, fullName: 1 } },
+            {
+              $project: {
+                username: 1,
+                avatarUrl: 1,
+                bio: 1,
+                isOnline: 1,
+                fullName: 1,
+              },
+            },
           ],
           as: "friend",
         },

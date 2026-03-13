@@ -43,11 +43,7 @@ export const createConversation = async (req: Request, res: Response) => {
   }
 };
 
-export const getConversations = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const getConversations = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId = new ObjectId(req.body.user.userId);
 
@@ -68,12 +64,39 @@ export const getConversations = async (
                 },
               },
             },
-            { $project: { username: 1, avatarUrl: 1, isOnline: 1, fullName: 1 } },
+            {
+              $project: { username: 1, avatarUrl: 1, isOnline: 1, fullName: 1 },
+            },
           ],
           as: "receiver",
         },
       },
       { $unwind: "$receiver" },
+
+      // ✅ lookup unread messages count
+      {
+        $lookup: {
+          from: "messages",
+          let: { convId: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$conversationId", "$$convId"] },
+                    { $ne: ["$senderId", userId] }, // not sent by me
+                    { $ne: ["$status", "read"] }, // not read
+                    { $ne: ["$isDeleted", true] }, // not deleted
+                  ],
+                },
+              },
+            },
+            { $count: "count" },
+          ],
+          as: "unreadMessages",
+        },
+      },
+
       {
         $project: {
           username: "$receiver.username",
@@ -83,7 +106,10 @@ export const getConversations = async (
           receiverId: "$receiver._id",
           lastMessage: 1,
           lastMessageAt: 1,
-          unreadCount: { $literal: 0 }, // implement with a separate unread count model if needed
+          // ✅ extract count from array, default 0
+          unreadCount: {
+            $ifNull: [{ $arrayElemAt: ["$unreadMessages.count", 0] }, 0],
+          },
         },
       },
       { $sort: { lastMessageAt: -1 } },

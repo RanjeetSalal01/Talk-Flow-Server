@@ -1,5 +1,8 @@
 import express from "express";
-import { createConversation, getConversations } from "../controllers/conversationController";
+import {
+  createConversation,
+  getConversations,
+} from "../controllers/conversationController";
 import { verifyToken } from "../middleware/auth";
 
 const router = express.Router();
@@ -8,6 +11,6 @@ const router = express.Router();
 router.post("createConversation", createConversation);
 
 // api/conversations/getConversations
-router.get("/getConversations",  verifyToken ,getConversations);
+router.get("/getConversations", verifyToken, getConversations);
 
 export default router;

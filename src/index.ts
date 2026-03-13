@@ -1,5 +1,6 @@
+require("dotenv").config();
+
 import cors from "cors";
-import dotenv from "dotenv";
 import express, { Express } from "express";
 import http from "http";
 
@@ -8,8 +9,6 @@ import { globalErrorHandler, notFound } from "./middleware/errorHandler";
 import { connectDB } from "./utils/db";
 import { initSocket } from "./utils/socket";
 
-dotenv.config();
-
 const app: Express = express();
 const PORT = process.env.PORT || 3000;
 
@@ -17,8 +16,8 @@ const PORT = process.env.PORT || 3000;
 app.use(
   cors({
     origin: "http://localhost:4200", // your frontend URL
-    credentials: true,               // 🔥 VERY IMPORTANT
-  })
+    credentials: true, // 🔥 VERY IMPORTANT
+  }),
 );
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
