@@ -1,6 +1,6 @@
 import { getModelForClass, prop, Ref } from "@typegoose/typegoose";
 import { ObjectId } from "mongodb";
-import { User } from "./user";
+import { User } from "./User";
 
 export class FriendShip {
   readonly _id!: ObjectId;
