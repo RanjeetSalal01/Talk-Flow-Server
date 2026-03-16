@@ -2,8 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getIO = exports.initSocket = exports.onlineUsers = void 0;
 const socket_io_1 = require("socket.io");
+<<<<<<< HEAD
 const Conversation_1 = require("../models/Conversation");
 const Message_1 = require("../models/Message");
+=======
+const conversation_1 = require("../models/conversation");
+const message_1 = require("../models/message");
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
 let io;
 exports.onlineUsers = new Map();
 const initSocket = (server) => {
@@ -22,10 +27,17 @@ const initSocket = (server) => {
             socket.broadcast.emit("onlineUser", { userId });
             // ✅ when user connects mark all their pending messages as delivered
             try {
+<<<<<<< HEAD
                 const conversations = await Conversation_1.ConversationModel.find({ members: userId });
                 const convIds = conversations.map((c) => c._id);
                 // find sent messages in these convs NOT sent by this user
                 const pendingMsgs = await Message_1.MessageModel.find({
+=======
+                const conversations = await conversation_1.ConversationModel.find({ members: userId });
+                const convIds = conversations.map((c) => c._id);
+                // find sent messages in these convs NOT sent by this user
+                const pendingMsgs = await message_1.MessageModel.find({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
                     conversationId: { $in: convIds },
                     senderId: { $ne: userId },
                     status: "sent",
@@ -41,7 +53,11 @@ const initSocket = (server) => {
                         senderMap.get(sid).add(cid);
                     });
                     // update all to delivered
+<<<<<<< HEAD
                     await Message_1.MessageModel.updateMany({
+=======
+                    await message_1.MessageModel.updateMany({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
                         conversationId: { $in: convIds },
                         senderId: { $ne: userId },
                         status: "sent",
@@ -61,7 +77,11 @@ const initSocket = (server) => {
         // ✅ when receiver opens conversation mark as read
         socket.on("markRead", async ({ conversationId, senderId }) => {
             try {
+<<<<<<< HEAD
                 await Message_1.MessageModel.updateMany({
+=======
+                await message_1.MessageModel.updateMany({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
                     conversationId,
                     senderId,
                     status: { $ne: "read" },

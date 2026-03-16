@@ -1,7 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.changePassword = exports.searchUser = exports.deleteUser = exports.updateUser = exports.getUser = exports.register = void 0;
+<<<<<<< HEAD
 const User_1 = require("../models/User");
+=======
+const user_1 = require("../models/user");
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
 const common_1 = require("../utils/common");
 const mongodb_1 = require("mongodb");
 const cloudinary_1 = require("../utils/cloudinary");
@@ -9,7 +13,11 @@ const register = async (req, res, next) => {
     try {
         const { password, ...rest } = req.body;
         const hashedPassword = await (0, common_1.hashPassword)(password);
+<<<<<<< HEAD
         const user = await User_1.UserModel.create({
+=======
+        const user = await user_1.UserModel.create({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             ...rest,
             password: hashedPassword,
         });
@@ -26,7 +34,11 @@ exports.register = register;
 const getUser = async (req, res, next) => {
     try {
         const { id } = req.params;
+<<<<<<< HEAD
         const user = await User_1.UserModel.findById(id);
+=======
+        const user = await user_1.UserModel.findById(id);
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -63,7 +75,11 @@ const updateUser = async (req, res, next) => {
             });
             update.avatarUrl = result.secure_url;
         }
+<<<<<<< HEAD
         const user = await User_1.UserModel.findByIdAndUpdate(userId, update, {
+=======
+        const user = await user_1.UserModel.findByIdAndUpdate(userId, update, {
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             new: true,
         }).select("-password");
         return res.status(200).json(user);
@@ -76,7 +92,11 @@ exports.updateUser = updateUser;
 const deleteUser = async (req, res, next) => {
     try {
         const { id } = req.params;
+<<<<<<< HEAD
         const user = await User_1.UserModel.findByIdAndDelete(id);
+=======
+        const user = await user_1.UserModel.findByIdAndDelete(id);
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
         if (!user) {
             return res.status(404).json({
                 success: false,
@@ -97,7 +117,11 @@ const searchUser = async (req, res, next) => {
     try {
         const { query } = req.query;
         const currentUserId = new mongodb_1.ObjectId(req.user?.userId);
+<<<<<<< HEAD
         const users = await User_1.UserModel.aggregate([
+=======
+        const users = await user_1.UserModel.aggregate([
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             {
                 $match: {
                     _id: { $ne: currentUserId },
@@ -175,7 +199,11 @@ const changePassword = async (req, res, next) => {
         const userId = req.user.userId;
         const { currentPassword, newPassword } = req.body;
         // ✅ get user with password field
+<<<<<<< HEAD
         const user = await User_1.UserModel.findById(userId).select('+password');
+=======
+        const user = await user_1.UserModel.findById(userId).select('+password');
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
         if (!user)
             return res.status(404).json({ message: 'User not found' });
         // ✅ verify current password
@@ -184,7 +212,11 @@ const changePassword = async (req, res, next) => {
             return res.status(400).json({ message: 'Current password is incorrect' });
         // ✅ hash and save new password
         const hashed = await (0, common_1.hashPassword)(newPassword);
+<<<<<<< HEAD
         await User_1.UserModel.findByIdAndUpdate(userId, { password: hashed });
+=======
+        await user_1.UserModel.findByIdAndUpdate(userId, { password: hashed });
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
         return res.status(200).json({ success: true });
     }
     catch (error) {

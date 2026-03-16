@@ -1,14 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getConversations = exports.createConversation = void 0;
+<<<<<<< HEAD
 const Conversation_1 = require("../models/Conversation");
+=======
+const conversation_1 = require("../models/conversation");
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
 const mongodb_1 = require("mongodb");
 const createConversation = async (req, res) => {
     try {
         const { members, type, groupName, groupAvatar } = req.body;
         // For private chat prevent duplicate conversation
         if (type === "private") {
+<<<<<<< HEAD
             const existing = await Conversation_1.ConversationModel.findOne({
+=======
+            const existing = await conversation_1.ConversationModel.findOne({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
                 type: "private",
                 members: { $all: members, $size: 2 },
             });
@@ -19,7 +27,11 @@ const createConversation = async (req, res) => {
                 });
             }
         }
+<<<<<<< HEAD
         const conversation = await Conversation_1.ConversationModel.create({
+=======
+        const conversation = await conversation_1.ConversationModel.create({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             type,
             members,
             admins: [],
@@ -44,7 +56,11 @@ exports.createConversation = createConversation;
 const getConversations = async (req, res, next) => {
     try {
         const userId = new mongodb_1.ObjectId(req.user.userId);
+<<<<<<< HEAD
         const conversations = await Conversation_1.ConversationModel.aggregate([
+=======
+        const conversations = await conversation_1.ConversationModel.aggregate([
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             { $match: { members: userId } },
             {
                 $lookup: {

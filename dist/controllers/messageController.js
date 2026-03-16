@@ -2,11 +2,19 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getUnreadCount = exports.uploadFile = exports.deleteMessage = exports.getMessages = exports.sendMessage = void 0;
 const mongodb_1 = require("mongodb");
+<<<<<<< HEAD
 const Conversation_1 = require("../models/Conversation");
 const Message_1 = require("../models/Message");
 const socket_1 = require("../utils/socket");
 const cloudinary_1 = require("../utils/cloudinary");
 const FriendRequest_1 = require("../models/FriendRequest");
+=======
+const conversation_1 = require("../models/conversation");
+const message_1 = require("../models/message");
+const socket_1 = require("../utils/socket");
+const cloudinary_1 = require("../utils/cloudinary");
+const friendRequest_1 = require("../models/friendRequest");
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
 const sendMessage = async (req, res, next) => {
     try {
         const { conversationId, receiverId, content, type, mediaUrl } = req.body;
@@ -15,12 +23,20 @@ const sendMessage = async (req, res, next) => {
         // find or create conversation
         let convId = conversationId;
         if (!convId) {
+<<<<<<< HEAD
             let conv = await Conversation_1.ConversationModel.findOne({
+=======
+            let conv = await conversation_1.ConversationModel.findOne({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
                 type: "private",
                 members: { $all: [senderId, receiverOId] },
             });
             if (!conv) {
+<<<<<<< HEAD
                 conv = await Conversation_1.ConversationModel.create({
+=======
+                conv = await conversation_1.ConversationModel.create({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
                     type: "private",
                     members: [senderId, receiverOId],
                     lastMessage: "",
@@ -32,7 +48,11 @@ const sendMessage = async (req, res, next) => {
         // ✅ check if receiver is online → set delivered, else sent
         const isReceiverOnline = socket_1.onlineUsers.has(receiverId.toString());
         const status = isReceiverOnline ? "delivered" : "sent";
+<<<<<<< HEAD
         const message = await Message_1.MessageModel.create({
+=======
+        const message = await message_1.MessageModel.create({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             conversationId: convId,
             senderId,
             content,
@@ -41,7 +61,11 @@ const sendMessage = async (req, res, next) => {
             mediaUrl: mediaUrl || null,
         });
         console.log(convId, type);
+<<<<<<< HEAD
         await Conversation_1.ConversationModel.findByIdAndUpdate(convId, {
+=======
+        await conversation_1.ConversationModel.findByIdAndUpdate(convId, {
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             lastMessage: type === "text"
                 ? content
                 : type === "image"
@@ -82,11 +106,19 @@ const getMessages = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = 10;
         const skip = (page - 1) * limit;
+<<<<<<< HEAD
         const total = await Message_1.MessageModel.countDocuments({
             conversationId,
             isDeleted: false,
         });
         const messages = await Message_1.MessageModel.find({
+=======
+        const total = await message_1.MessageModel.countDocuments({
+            conversationId,
+            isDeleted: false,
+        });
+        const messages = await message_1.MessageModel.find({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             conversationId,
             isDeleted: false,
         })
@@ -108,7 +140,11 @@ exports.getMessages = getMessages;
 const deleteMessage = async (req, res, next) => {
     try {
         const { id } = req.params;
+<<<<<<< HEAD
         await Message_1.MessageModel.findByIdAndUpdate(id, { isDeleted: true });
+=======
+        await message_1.MessageModel.findByIdAndUpdate(id, { isDeleted: true });
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
         return res.status(200).json({ success: true });
     }
     catch (error) {
@@ -149,17 +185,29 @@ const getFileType = (mimetype) => {
 const getUnreadCount = async (req, res, next) => {
     try {
         const userId = new mongodb_1.ObjectId(req.user.userId);
+<<<<<<< HEAD
         const conversations = await Conversation_1.ConversationModel.find({ members: userId });
         const convIds = conversations.map((c) => c._id);
         const chatCount = await Message_1.MessageModel.countDocuments({
+=======
+        const conversations = await conversation_1.ConversationModel.find({ members: userId });
+        const convIds = conversations.map((c) => c._id);
+        const chatCount = await message_1.MessageModel.countDocuments({
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
             conversationId: { $in: convIds },
             senderId: { $ne: userId },
             status: { $ne: "read" },
             isDeleted: { $ne: true },
         });
+<<<<<<< HEAD
         const reqCount = await FriendRequest_1.FriendRequestModel.countDocuments({
             receiverId: userId,
             status: FriendRequest_1.FriendRequestStatus.Pending,
+=======
+        const reqCount = await friendRequest_1.FriendRequestModel.countDocuments({
+            receiverId: userId,
+            status: friendRequest_1.FriendRequestStatus.Pending,
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
         });
         return res.status(200).json({ chatCount, reqCount });
     }

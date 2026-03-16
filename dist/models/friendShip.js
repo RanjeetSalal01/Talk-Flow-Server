@@ -11,12 +11,20 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FriendShipModel = exports.FriendShip = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
+<<<<<<< HEAD
 const User_1 = require("./User");
+=======
+const user_1 = require("./user");
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
 class FriendShip {
 }
 exports.FriendShip = FriendShip;
 __decorate([
+<<<<<<< HEAD
     (0, typegoose_1.prop)({ required: true, ref: () => User_1.User }),
+=======
+    (0, typegoose_1.prop)({ required: true, ref: () => user_1.User }),
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
     __metadata("design:type", Array)
 ], FriendShip.prototype, "participants", void 0);
 __decorate([
@@ -26,4 +34,8 @@ __decorate([
 exports.FriendShipModel = (0, typegoose_1.getModelForClass)(FriendShip, {
     schemaOptions: { timestamps: true },
 });
+<<<<<<< HEAD
 //# sourceMappingURL=FriendShip.js.map
+=======
+//# sourceMappingURL=friendShip.js.map
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9

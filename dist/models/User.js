@@ -49,4 +49,8 @@ __decorate([
 exports.UserModel = (0, typegoose_1.getModelForClass)(User, {
     schemaOptions: { timestamps: true },
 });
+<<<<<<< HEAD
 //# sourceMappingURL=User.js.map
+=======
+//# sourceMappingURL=user.js.map
+>>>>>>> 9699da23981e5a07e6f2cac1c38569c3dd1c87a9
