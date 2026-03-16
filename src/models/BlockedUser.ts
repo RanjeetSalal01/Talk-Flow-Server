@@ -1,6 +1,6 @@
 import { getModelForClass, prop, Ref } from "@typegoose/typegoose";
 import { ObjectId } from "mongodb";
-import { User } from "./User";
+import { User } from "./user";
 
 export class BlockedUser {
   readonly _id!: ObjectId;

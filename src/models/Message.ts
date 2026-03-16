@@ -1,7 +1,7 @@
 import { getModelForClass, prop, Ref } from "@typegoose/typegoose";
 import { ObjectId } from "mongodb";
-import { User } from "./User";
-import { Conversation } from "./Conversation";
+import { User } from "./user";
+import { Conversation } from "./conversation";
 
 export enum MessageType {
   Text = "text",
