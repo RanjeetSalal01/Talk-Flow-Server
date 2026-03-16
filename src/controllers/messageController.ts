@@ -10,13 +10,13 @@ import {
 } from "../models/friendRequest";
 
 export const sendMessage = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction,
 ) => {
   try {
     const { conversationId, receiverId, content, type, mediaUrl } = req.body;
-    const senderId = new ObjectId(req.body.user.userId);
+    const senderId = new ObjectId(req.user.userId);
     const receiverOId = new ObjectId(receiverId);
 
     // find or create conversation
@@ -175,12 +175,12 @@ const getFileType = (mimetype: string): string => {
 
 // messageController.ts
 export const getUnreadCount = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const userId = new ObjectId(req.body.user.userId);
+    const userId = new ObjectId(req.user.userId);
 
     const conversations = await ConversationModel.find({ members: userId });
     const convIds = conversations.map((c) => c._id);

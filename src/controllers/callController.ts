@@ -3,12 +3,12 @@ import { CallModel, CallStatus } from "../models/call";
 import { ObjectId } from "mongodb";
 
 export const initiateCall = async (
-  req: Request,
+  req: any,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const callerId = new ObjectId(req.body.user.userId);
+    const callerId = new ObjectId(req.user.userId);
     const { receiverId, callType } = req.body;
     const call = await CallModel.create({
       callerId,
@@ -55,21 +55,32 @@ export const updateCallStatus = async (
   }
 };
 
-export const getCallHistory = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const getCallHistory = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const userId = new ObjectId(req.body.user.userId);
+    const userId = new ObjectId(req.user.userId);
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 15;
+    const skip = (page - 1) * limit;
+
+    const total = await CallModel.countDocuments({
+      $or: [{ callerId: userId }, { receiverId: userId }]
+    });
+
     const calls = await CallModel.find({
       $or: [{ callerId: userId }, { receiverId: userId }],
     })
       .populate("callerId", "fullName avatarUrl username")
       .populate("receiverId", "fullName avatarUrl username")
       .sort({ createdAt: -1 })
-      .limit(50);
-    return res.status(200).json(calls);
+      .skip(skip)
+      .limit(limit);
+
+    return res.status(200).json({
+      data: calls,
+      hasMore: skip + limit < total, // ✅ same pattern as getMessages
+      page,
+      total,
+    });
   } catch (error) {
     next(error);
   }

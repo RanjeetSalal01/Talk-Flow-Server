@@ -67,15 +67,11 @@ export const logout = async (
   }
 };
 
-export const getUser = async (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => {
+export const getUser = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const { user } = req.body;
-
-    const foundUser = await UserModel.findById(user.userId);
+    const userId = req.user.userId; 
+    console.log(userId)
+    const foundUser = await UserModel.findById(userId);
 
     if (!foundUser) {
       return res.status(404).json({

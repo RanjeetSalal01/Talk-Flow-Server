@@ -98,9 +98,9 @@ export const rejectFriendRequest = async (req: Request, res: Response) => {
   }
 };
 
-export const getFriends = async (req: Request, res: Response) => {
+export const getFriends = async (req: any, res: Response) => {
   try {
-    const me = new ObjectId(req.body.user.userId);
+    const me = new ObjectId(req.user.userId);
 
     const friends = await FriendShipModel.aggregate([
       { $match: { participants: me, status: "accepted" } },
@@ -143,9 +143,9 @@ export const getFriends = async (req: Request, res: Response) => {
 };
 
 // GET /friend-requests/incoming — requests sent TO me
-export const getIncomingRequests = async (req: Request, res: Response) => {
+export const getIncomingRequests = async (req: any, res: Response) => {
   try {
-    const userId = new ObjectId(req.body.user.userId);
+    const userId = new ObjectId(req.user.userId);
 
     const requests = await FriendRequestModel.find({
       receiverId: userId,
@@ -161,9 +161,9 @@ export const getIncomingRequests = async (req: Request, res: Response) => {
 };
 
 // GET /friend-requests/outgoing — requests sent BY me
-export const getOutgoingRequests = async (req: Request, res: Response) => {
+export const getOutgoingRequests = async (req: any, res: Response) => {
   try {
-    const userId = new ObjectId(req.body.user.userId);
+    const userId = new ObjectId(req.user.userId);
 
     const requests = await FriendRequestModel.find({
       senderId: userId,

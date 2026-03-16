@@ -16,7 +16,7 @@ export const verifyToken = (
   try {
     const decoded = verify(token);
     // attach to request for handlers
-    (req as any).body.user = decoded;
+    (req as any).user = decoded;
     next();
   } catch (err: any) {
     return res

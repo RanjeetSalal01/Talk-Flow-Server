@@ -43,9 +43,9 @@ export const createConversation = async (req: Request, res: Response) => {
   }
 };
 
-export const getConversations = async (req: Request, res: Response, next: NextFunction) => {
+export const getConversations = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const userId = new ObjectId(req.body.user.userId);
+    const userId = new ObjectId(req.user.userId);
 
     const conversations = await ConversationModel.aggregate([
       { $match: { members: userId } },
