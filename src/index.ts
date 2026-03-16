@@ -15,7 +15,7 @@ const PORT = process.env.PORT || 3000;
 // middleware
 app.use(
   cors({
-    origin: "http://localhost:4200", // your frontend URL
+    origin: ["http://localhost:4200", "https://talk-flow-client.vercel.app"],  // your frontend URL
     credentials: true, // 🔥 VERY IMPORTANT
   }),
 );
