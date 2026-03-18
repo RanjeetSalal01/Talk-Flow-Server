@@ -7,9 +7,9 @@ const mongodb_1 = require("mongodb");
 const FriendShip_1 = require("../models/FriendShip");
 const sendFriendRequest = async (req, res) => {
     try {
-        const { user, receiverId } = req.body;
+        const { receiverId } = req.body;
         let friendRequest = await FriendRequest_1.FriendRequestModel.create({
-            senderId: user.userId,
+            senderId: req.user.userId,
             receiverId,
             status: FriendRequest_1.FriendRequestStatus.Pending,
         });

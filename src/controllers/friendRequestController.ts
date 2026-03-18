@@ -7,12 +7,12 @@ import { getIO } from "../utils/socket";
 import { ObjectId } from "mongodb";
 import { FriendShipModel } from "../models/FriendShip";
 
-export const sendFriendRequest = async (req: Request, res: Response) => {
+export const sendFriendRequest = async (req: any, res: Response) => {
   try {
-    const { user, receiverId } = req.body;
+    const { receiverId } = req.body;
 
     let friendRequest = await FriendRequestModel.create({
-      senderId: user.userId,
+      senderId: req.user.userId,
       receiverId,
       status: FriendRequestStatus.Pending,
     });

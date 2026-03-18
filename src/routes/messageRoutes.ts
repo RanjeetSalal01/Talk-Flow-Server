@@ -1,13 +1,11 @@
 import express from "express";
 import {
-  sendMessage,
-  getMessages,
   deleteMessage,
-  uploadFile,
+  getMessages,
   getUnreadCount,
+  sendMessage,
+  uploadFile,
 } from "../controllers/messageController";
-import { getTypingIndicator } from "../controllers/typingController";
-import { verify } from "../utils/jwt";
 import { verifyToken } from "../middleware/auth";
 import { upload } from "../middleware/upload";
 
