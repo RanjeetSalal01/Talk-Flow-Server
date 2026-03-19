@@ -80,35 +80,25 @@ const initSocket = (server) => {
             io.to(receiverId).emit("stopTyping", { conversationId });
         });
         // ✅ call signaling — server just relays, never touches DB
-        socket.on("callOffer", ({ to, offer, callType, callerName, callerAvatar, callId }) => {
-            io.to(to).emit("callOffer", {
-                from: userId,
-                offer,
-                callType,
-                callerName,
-                callerAvatar,
-                callId,
-            });
-        });
-        socket.on("callAnswer", ({ to, answer }) => {
-            io.to(to).emit("callAnswer", { answer });
-        });
-        socket.on("iceCandidate", ({ to, candidate }) => {
-            io.to(to).emit("iceCandidate", { candidate });
-        });
-        socket.on("callRejected", ({ to, callId }) => {
-            io.to(to).emit("callRejected", { callId });
-        });
-        socket.on("callEnded", ({ to, callId }) => {
-            io.to(to).emit("callEnded", { callId });
-        });
-        socket.on("callBusy", ({ to, callId }) => {
-            io.to(to).emit("callBusy", { callId });
-        });
-        socket.on("callCancelled", ({ to, callId }) => {
-            // ✅ caller cancelled before callee picked up
-            io.to(to).emit("callCancelled", { callId });
-        });
+        socket.on("callOffer", ({ to, callType, callerName, callerAvatar, callId }) => io
+            .to(to)
+            .emit("callOffer", {
+            from: userId,
+            callType,
+            callerName,
+            callerAvatar,
+            callId,
+        }));
+        socket.on("callAccepted", ({ to, callId }) => io.to(to).emit("callAccepted", { from: userId, callId }));
+        socket.on("sdpOffer", ({ to, offer }) => io.to(to).emit("sdpOffer", { from: userId, offer }));
+        socket.on("sdpAnswer", ({ to, answer }) => io.to(to).emit("sdpAnswer", { from: userId, answer }));
+        socket.on("iceCandidate", ({ to, candidate }) => io.to(to).emit("iceCandidate", { from: userId, candidate }));
+        socket.on("iceRestart", ({ to }) => io.to(to).emit("iceRestart", { from: userId }));
+        // Call control events
+        socket.on("callRejected", ({ to, callId }) => io.to(to).emit("callRejected", { callId }));
+        socket.on("callEnded", ({ to, callId }) => io.to(to).emit("callEnded", { callId }));
+        socket.on("callBusy", ({ to, callId }) => io.to(to).emit("callBusy", { callId }));
+        socket.on("callCancelled", ({ to, callId }) => io.to(to).emit("callCancelled", { callId }));
         socket.on("disconnect", () => {
             exports.onlineUsers.delete(userId);
             socket.broadcast.emit("offlineUser", { userId });

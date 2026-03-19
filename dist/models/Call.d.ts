@@ -19,7 +19,7 @@ export declare class Call {
     callerId: Ref<User>;
     receiverId: Ref<User>;
     callType: CallType;
-    status?: CallStatus;
+    status: CallStatus;
     startedAt?: Date | null;
     endedAt?: Date | null;
     duration?: number | null;

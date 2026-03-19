@@ -56,7 +56,11 @@ export const logout = async (
   next: NextFunction,
 ) => {
   try {
-    res.clearCookie("token");
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none",
+    });
 
     return res.status(200).json({
       success: true,
@@ -69,8 +73,8 @@ export const logout = async (
 
 export const getUser = async (req: any, res: Response, next: NextFunction) => {
   try {
-    const userId = req.user.userId; 
-    console.log(userId)
+    const userId = req.user.userId;
+    console.log(userId);
     const foundUser = await UserModel.findById(userId);
 
     if (!foundUser) {
