@@ -3,12 +3,12 @@ import { ObjectId } from "mongodb";
 import { User } from "./User";
 
 export enum CallStatus {
-  Ringing = "ringing",
-  Active = "active",
-  Ended = "ended",
+  Ringing  = "ringing",
+  Active   = "active",
+  Ended    = "ended",
   Rejected = "rejected",
-  Missed = "missed",
-  Busy = "busy",
+  Missed   = "missed",
+  Busy     = "busy",
 }
 
 export enum CallType {
@@ -30,16 +30,16 @@ export class Call {
   public callType!: CallType;
 
   @prop({ default: CallStatus.Ringing, enum: CallStatus })
-  public status?: CallStatus;
+  public status!: CallStatus;
 
   @prop({ default: null })
-  public startedAt?: Date | null;
+  public startedAt?: Date | null;  // set when callee accepts
 
   @prop({ default: null })
-  public endedAt?: Date | null;
+  public endedAt?: Date | null;    // set when either side ends
 
   @prop({ default: null })
-  public duration?: number | null; // in seconds
+  public duration?: number | null; // seconds, calculated from startedAt → endedAt
 }
 
 export const CallModel = getModelForClass(Call, {
